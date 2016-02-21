@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode;
@@ -43,15 +43,15 @@ class vcMacedGmap
                         'type' => 'textfield',
                         'heading' => __('Google Maps Lat', $this->plugin->name),
                         'param_name' => 'lat',
-                        'value' => '-33.87',
-                        'description' => __('The map will appear only if this field is filled correctly.<br />Example: <b>-33.87</b>', $this->plugin->name)
+                        'value' => '40.665105',
+                        'description' => __('The map will appear only if this field is filled correctly.<br />Example: <b>40.665105</b>', $this->plugin->name)
                     ),
                     array(
                         'type' => 'textfield',
                         'heading' => __('Google Maps Lng', $this->plugin->name),
                         'param_name' => 'lng',
-                        'value' => '151.21',
-                        'description' => __('The map will appear only if this field is filled correctly.<br />Example: <b>151.21</b>', $this->plugin->name)
+                        'value' => '-73.993928',
+                        'description' => __('The map will appear only if this field is filled correctly.<br />Example: <b>-73.993928</b>', $this->plugin->name)
                     ),
                     array(
                         'type' => 'textfield',
