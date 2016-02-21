@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode;
@@ -209,7 +209,7 @@ class vcMacedGmap
         $output .= 'center				: latlng,';
         $output .= 'mapTypeId			: google.maps.MapTypeId.ROADMAP,';
         if ($styles)
-            $output .= 'styles	: ' . $styles . ',';
+            $output .= 'styles	: ' . str_replace(array('``', '`{`', '`}`'), array('"', '[', ']'), $styles) . ',';
         $output .= 'zoomControl			: ' . $zoomControl . ',';
         $output .= 'mapTypeControl		: ' . $mapTypeControl . ',';
         $output .= 'streetViewControl	: ' . $streetViewControl . ',';
