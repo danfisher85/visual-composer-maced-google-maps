@@ -6,7 +6,7 @@
  * Version: 1.1.0
  * Author: macerier
  * Author URI:
- * Description: Simply creates google maps with Visual Composer or via shortcode (modified by Dan Fisher)
+ * Description: Simply creates google maps with Visual Composer or via shortcode. Modified by Dan Fisher
  * License: GPL2
  */
 class vcMacedGmap
@@ -91,6 +91,40 @@ class vcMacedGmap
                         'description' => __('Show map border', $this->plugin->name)
                     ),
                     array(
+                        'type' => 'dropdown',
+                        'heading' => __('Shape', 'js_composer'),
+                        'param_name' => 'shape',
+                        'value' => array(
+                            __( 'Default', $this->plugin->name ) => 'default',
+                            __( 'Top Wave', $this->plugin->name ) => 'top_wave',
+                            
+                        ),
+                        'description' => __('Choose the shape type for the map.', $this->plugin->name)
+                    ),
+                    array(
+                        'type'        => 'checkbox',
+                        'heading'     => __( 'Add Map Toggle?', $this->plugin->name ),
+                        'param_name'  => 'toggle',
+                        'description' => __( 'You can open and close the map.', $this->plugin->name ),
+                        'value'       => array( 
+                            __( 'Yes', $this->plugin->name ) => 'true'
+                        ),
+                    ),
+                    array(
+                        'type' => 'textfield',
+                        'heading' => __('Toggle Open Text', $this->plugin->name),
+                        'param_name' => 'toggle_open',
+                        'value' => 'Open Google Map',
+                        'description' => __('Text for Toggle Link if map is closed.', $this->plugin->name)
+                    ),
+                    array(
+                        'type' => 'textfield',
+                        'heading' => __('Toggle Closed Text', $this->plugin->name),
+                        'param_name' => 'toggle_closed',
+                        'value' => 'Close Google Map',
+                        'description' => __('Text for Toggle Link if map is open.', $this->plugin->name)
+                    ),
+                    array(
                         'type' => 'attach_image',
                         'heading' => __('Marker Icon', 'js_composer'),
                         'param_name' => 'icn',
@@ -118,7 +152,7 @@ class vcMacedGmap
                             __( 'Retro', $this->plugin->name ) => 'retro',
                             
                         ),
-                        'description' => __('Choose one of predefined Google Map styles.', $this->plugin->name)
+                        'description' => __('Choose one of predefined Google Map styles. See examples on http://snazzymaps.com', $this->plugin->name)
                     ),
                     array(
                         'type' => 'textarea',
@@ -179,6 +213,10 @@ class vcMacedGmap
             'height' => 200,
             'controls' => '',
             'border' => '',
+            'toggle' => '',
+            'toggle_open' => 'Open Google Map',
+            'toggle_closed' => 'Close Google Map',
+            'shape' => '',
             'icn' => '',
             'styles' => '',
             'titl' => '',
@@ -304,15 +342,30 @@ class vcMacedGmap
         $output .= '}';
         
         $output .= 'jQuery(document).ready(function($){';
-        $output .= 'google_maps_' . $uid . '();';
+            $output .= 'google_maps_' . $uid . '();';
+
+                if ( $toggle == 'true') {
+                    $output .= 'var button     = $("#gMapTrigger_' . $uid . '");';
+                    $output .= 'var button_txt = $("#gMapTrigger_' . $uid . ' span");';
+                    
+                    $output .= '$("#gMapWrapper_' . $uid . '").on("hidden.bs.collapse", function () {';
+                        $output .= 'button_txt.data("text-original", button_txt.text());';
+                        $output .= 'button_txt.text(button.data("text-swap"));';
+                    $output .= '});';
+                    $output .= '$("#gMapWrapper_' . $uid . '").on("shown.bs.collapse", function () {';
+                        $output .= 'button_txt.data("text-swap", button.text());';
+                        $output .= 'button_txt.text(button_txt.data("text-original"));';
+                    $output .= '});';
+                }
         $output .= '});';
         // ]]>
         $output .= '</script>' . "\n";
         
-        $output .= '<div class="google-map-wrapper ' . $class . '">';
+        $output .= '<div class="google-map-wrapper ' . $class . '" id="gmapHolder_' . $uid . '">';
         
         if ($titl || $content) {
-            $output .= '<div class="google-map-contact-wrapper">';
+            
+            $output .= '<div class="google-map-contact-wrapper" id="gMapWrapper_' . $uid . '">';
             $output .= '<div class="get_in_touch">';
             if ($titl)
                 $output .= '<p class="sameH3">' . $titl . '</p>';
@@ -348,7 +401,17 @@ class vcMacedGmap
             $output .= '</div>';
         }
         
-        $output .= '<div class="google-map" id="google-map-area-' . $uid . '" style="width:100%; height:' . intval($height) . 'px;">&nbsp;</div>';
+        if ( $toggle == 'true') {
+            $output .= '<div class="hr-scroll-bottom"><a data-toggle="collapse" data-parent="#gmapHolder_' . $uid . '" href="#gMapWrapper_' . $uid . '" aria-expanded="true" aria-controls="gMapWrapper_' . $uid . '" id="gMapTrigger_' . $uid . '" data-text-swap="' . $toggle_open . '"><span>' . $toggle_closed . '</span></a></div>';
+            if ($shape == 'top_wave') {
+                $shape = 'google-map-shap-wave-top';
+            }
+            $output .= '<div class="google-map-inner-wrapper ' . $shape . ' collapse in" id="gMapWrapper_' . $uid . '">';
+                $output .= '<div class="google-map" id="google-map-area-' . $uid . '" style="width:100%; height:' . intval($height) . 'px;">&nbsp;</div>';
+            $output .= '</div>';
+        } else {
+            $output .= '<div class="google-map" id="google-map-area-' . $uid . '" style="width:100%; height:' . intval($height) . 'px;">&nbsp;</div>';
+        }
         
         $output .= '</div>' . "\n";
         
