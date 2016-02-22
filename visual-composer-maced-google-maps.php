@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode. Modified by Dan Fisher
