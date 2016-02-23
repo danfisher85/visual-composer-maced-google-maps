@@ -77,6 +77,10 @@
 	text-align: center;
 }
 
+.google-map-wrapper.has_border {
+	border: 5px solid #fff;
+}
+
 .google-map-wrapper .google-map-contact-wrapper .get_in_touch ul li:last-child:after
 	{
 	display: none;
