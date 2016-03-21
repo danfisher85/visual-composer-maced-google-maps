@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode. Modified by Dan Fisher
@@ -18,7 +18,7 @@ class vcMacedGmap
         $this->plugin = new stdClass();
         $this->plugin->name = 'visual-composer-maced-google-maps'; // Plugin Folder
         $this->plugin->displayName = 'Visual Composer Maced Google Maps'; // Plugin Name
-        $this->plugin->version = '1.2.1';
+        $this->plugin->version = '1.2.2';
         $this->plugin->folder = WP_PLUGIN_DIR . '/' . $this->plugin->name; // Full Path to Plugin Folder
         $this->plugin->url = WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__));
         
@@ -254,8 +254,18 @@ class vcMacedGmap
         wp_enqueue_style($this->plugin->name . '-flaticon', plugins_url($this->plugin->name . '/css/flaticon.css', $this->plugin->name), false, $this->plugin->version);
         
         $output = '<script>';
+
+        $output .= 'var params;';
+
+        $output .= 'jQuery(function () {';
+            $output .= 'if (window.google && google.maps) {';
+                $output .= 'initializeMap();';
+            $output .= '} else {';
+                $output .= 'lazyLoadGoogleMap();';        
+            $output .= '}';
+        $output .= '}); ';
         // <![CDATA[
-        $output .= 'function google_maps_' . $uid . '(){';
+        $output .= 'function initialize_' . $uid . '(params){';
         
         $output .= 'var latlng = new google.maps.LatLng(' . $lat . ',' . $lng . ');';
         
@@ -341,9 +351,19 @@ class vcMacedGmap
         }
         
         $output .= '}';
+
+        $output .= 'function lazyLoadGoogleMap() {
+        $.getScript("http://maps.google.com/maps/api/js?sensor=true&callback=initializeMap")
+        .done(function (script, textStatus) {            
+            //alert("Google map script loaded successfully");
+        })
+        .fail(function (jqxhr, settings, ex) {
+            //alert("Could not load Google Map script: " + jqxhr);
+        });
+    }';
         
         $output .= 'jQuery(document).ready(function($){';
-            $output .= 'google_maps_' . $uid . '();';
+            $output .= 'initialize_' . $uid . '(params);';
 
                 if ( $toggle == 'true') {
                     $output .= 'var button     = $("#gMapTrigger_' . $uid . '");';
@@ -360,6 +380,10 @@ class vcMacedGmap
                 }
         $output .= '});';
         // ]]>
+
+        $output .= 'function initializeMap() {
+        initialize_' . $uid . '(params);
+    }';
         $output .= '</script>' . "\n";
         
         $output .= '<div class="google-map-wrapper ' . $class . '" id="gmapHolder_' . $uid . '">';
