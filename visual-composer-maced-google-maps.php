@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode. Modified by Dan Fisher
@@ -18,7 +18,7 @@ class vcMacedGmap
         $this->plugin = new stdClass();
         $this->plugin->name = 'visual-composer-maced-google-maps'; // Plugin Folder
         $this->plugin->displayName = 'Visual Composer Maced Google Maps'; // Plugin Name
-        $this->plugin->version = '1.2.2';
+        $this->plugin->version = '1.2.3';
         $this->plugin->folder = WP_PLUGIN_DIR . '/' . $this->plugin->name; // Full Path to Plugin Folder
         $this->plugin->url = WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__));
         
@@ -249,9 +249,7 @@ class vcMacedGmap
             $streetViewControl = 'true';
         
         wp_enqueue_script('google-maps', 'https://maps.google.com/maps/api/js?sensor=false', false, $this->plugin->version, true);
-        
         wp_enqueue_style($this->plugin->name . '-base', plugins_url($this->plugin->name . '/css/base.css', $this->plugin->name), false, $this->plugin->version);
-        wp_enqueue_style($this->plugin->name . '-flaticon', plugins_url($this->plugin->name . '/css/flaticon.css', $this->plugin->name), false, $this->plugin->version);
         
         $output = '<script>';
 
