@@ -12,8 +12,6 @@ Simply creates google maps with Visual Composer or via shortcode.
 
 This plugin extends Visual Composer so you can easily create sleek Google maps on your website.
 
-[Developer on Google+](https://plus.google.com/114124611804630905228 "Developer on Google+")
-
 == Installation ==
 
 1. Download the plugin and unzip it.
