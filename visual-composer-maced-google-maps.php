@@ -1,9 +1,8 @@
 <?php
-
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.2.5
+ * Version: 1.2.6
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode. Modified by Dan Fisher
@@ -18,7 +17,7 @@ class vcMacedGmap
         $this->plugin = new stdClass();
         $this->plugin->name = 'visual-composer-maced-google-maps'; // Plugin Folder
         $this->plugin->displayName = 'Visual Composer Maced Google Maps'; // Plugin Name
-        $this->plugin->version = '1.2.4';
+        $this->plugin->version = '1.2.6';
         $this->plugin->folder = WP_PLUGIN_DIR . '/' . $this->plugin->name; // Full Path to Plugin Folder
         $this->plugin->url = WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__));
         
@@ -39,6 +38,13 @@ class vcMacedGmap
                 'category' => __('Content', $this->plugin->name),
                 'icon' => 'icon-wpb-map-pin',
                 'params' => array(
+                    array(
+                        'type' => 'textfield',
+                        'heading' => __('Google Map API Key', $this->plugin->name),
+                        'param_name' => 'api',
+                        'value' => '',
+                        'description' => __('Usage of the Google Maps APIs now requires a key. Please read more about <a href="https://danfisher.ticksy.com/article/7834">here</a>', $this->plugin->name)
+                    ),
                     array(
                         'type' => 'textfield',
                         'heading' => __('Google Maps Lat', $this->plugin->name),
@@ -157,7 +163,7 @@ class vcMacedGmap
                     array(
                         'type' => 'textarea',
                         'heading' => __('Additional Markers | Lat,Lng', $this->plugin->name),
-                        'param_name' => 'text',
+                        'param_name' => 'latlng',
                         'value' => '',
                         'description' => __('Separate Lat,Lang with <b>coma</b> [ , ]<br />Separate multiple Markers with <b>semicolon</b> [ ; ]<br />Example: <b>-33.88,151.21;-33.89,151.22</b>', $this->plugin->name)
                     ),
@@ -209,6 +215,7 @@ class vcMacedGmap
         extract(shortcode_atts(array(
             'lat' => '40.665105',
             'lng' => '-73.993928',
+            'api' => '',
             'zoom' => 13,
             'height' => 200,
             'controls' => '',
@@ -247,8 +254,13 @@ class vcMacedGmap
             $mapTypeControl = 'true';
         if (strpos($controls, 'streetView') !== false)
             $streetViewControl = 'true';
+
+        $google_api_key = '';
+        if ( $api != '' ) {
+            $google_api_key = '&key=' . $api;
+        }
         
-        wp_enqueue_script('google-maps', 'https://maps.google.com/maps/api/js?sensor=false', false, $this->plugin->version, true);
+        wp_enqueue_script('google-maps', '//maps.google.com/maps/api/js?sensor=false' . esc_attr( $google_api_key ), false, $this->plugin->version, true);
         // wp_enqueue_style($this->plugin->name . '-base', plugins_url($this->plugin->name . '/css/base.css', $this->plugin->name), false, $this->plugin->version);
         
         $output = '<script>';
@@ -327,6 +339,9 @@ class vcMacedGmap
                 
                 // explode array
                 $latlng = explode(';', $latlng);
+
+                // set bounds
+                $output .= 'var bounds = new google.maps.LatLngBounds();';
                 
                 foreach ($latlng as $k => $v) {
                     
@@ -339,7 +354,11 @@ class vcMacedGmap
                         $output .= 'icon	: "' . $icn . '",';
                     $output .= 'map					: map';
                     $output .= '});';
+
+                    $output .= 'bounds.extend(new google.maps.LatLng(' . $v . '));';
                 }
+
+                $output .= 'bounds.extend(latlng);map.fitBounds(bounds);';
             }
             
             $output .= '}';
