@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.2.6
+ * Version: 1.2.7
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode. Modified by Dan Fisher
@@ -20,7 +20,7 @@ class vcMacedGmap
         $this->plugin->version = '1.2.6';
         $this->plugin->folder = WP_PLUGIN_DIR . '/' . $this->plugin->name; // Full Path to Plugin Folder
         $this->plugin->url = WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__));
-        
+
         add_action('plugins_loaded', array(
             &$this,
             'loadLanguageFiles'
@@ -29,7 +29,7 @@ class vcMacedGmap
             &$this,
             'GmapShortcode'
         ));
-        
+
         if (function_exists('vc_map')) {
             vc_map(array(
                 'name' => __('Maced Google Maps', $this->plugin->name),
@@ -103,7 +103,7 @@ class vcMacedGmap
                         'value' => array(
                             __( 'Default', $this->plugin->name ) => 'default',
                             __( 'Top Wave', $this->plugin->name ) => 'top_wave',
-                            
+
                         ),
                         'description' => __('Choose the shape type for the map.', $this->plugin->name)
                     ),
@@ -112,7 +112,7 @@ class vcMacedGmap
                         'heading'     => __( 'Add Map Toggle?', $this->plugin->name ),
                         'param_name'  => 'toggle',
                         'description' => __( 'You can open and close the map.', $this->plugin->name ),
-                        'value'       => array( 
+                        'value'       => array(
                             __( 'Yes', $this->plugin->name ) => 'true'
                         ),
                     ),
@@ -156,7 +156,7 @@ class vcMacedGmap
                             __( 'Light Monochrome', $this->plugin->name ) => 'light_monochrome',
                             __( 'Paper', $this->plugin->name ) => 'paper',
                             __( 'Retro', $this->plugin->name ) => 'retro',
-                            
+
                         ),
                         'description' => __('Choose one of predefined Google Map styles. See examples on http://snazzymaps.com', $this->plugin->name)
                     ),
@@ -233,7 +233,7 @@ class vcMacedGmap
             'latlng' => '',
             'uid' => uniqid()
         ), $attr));
-        
+
         // border
         if ($border) {
             $class = 'has_border';
@@ -243,7 +243,7 @@ class vcMacedGmap
         if ($icn) {
             $icn = wp_get_attachment_url($icn);
         }
-        
+
         // controls
         $zoomControl = $mapTypeControl = $streetViewControl = 'false';
         if (! $controls)
@@ -259,10 +259,10 @@ class vcMacedGmap
         if ( $api != '' ) {
             $google_api_key = '&key=' . $api;
         }
-        
+
         wp_enqueue_script('google-maps', '//maps.google.com/maps/api/js?sensor=false' . esc_attr( $google_api_key ), false, $this->plugin->version, true);
         // wp_enqueue_style($this->plugin->name . '-base', plugins_url($this->plugin->name . '/css/base.css', $this->plugin->name), false, $this->plugin->version);
-        
+
         $output = '<script>';
 
         $output .= '(function($, window) {';
@@ -270,9 +270,9 @@ class vcMacedGmap
 
             // <![CDATA[
             $output .= 'function google_maps_' . $uid . '(){';
-            
+
             $output .= 'var latlng = new google.maps.LatLng(' . $lat . ',' . $lng . ');';
-            
+
             $output .= 'var myOptions = {';
             $output .= 'zoom                : ' . intval($zoom) . ',';
             $output .= 'center              : latlng,';
@@ -321,33 +321,33 @@ class vcMacedGmap
             $output .= 'streetViewControl   : ' . $streetViewControl . ',';
             $output .= 'scrollwheel         : false';
             $output .= '};';
-            
+
             $output .= 'var map = new google.maps.Map(document.getElementById("google-map-area-' . $uid . '"), myOptions);';
-            
+
             $output .= 'var marker = new google.maps.Marker({';
             $output .= 'position            : latlng,';
             if ($icn)
                 $output .= 'icon    : "' . $icn . '",';
             $output .= 'map                 : map';
             $output .= '});';
-            
+
             // additional markers
             if ($latlng) {
-                
+
                 // remove white spaces
                 $latlng = str_replace(' ', '', $latlng);
-                
+
                 // explode array
                 $latlng = explode(';', $latlng);
 
                 // set bounds
                 $output .= 'var bounds = new google.maps.LatLngBounds();';
-                
+
                 foreach ($latlng as $k => $v) {
-                    
+
                     $markerID = $k + 1;
                     $markerID = 'marker' . $markerID;
-                    
+
                     $output .= 'var ' . $markerID . ' = new google.maps.Marker({';
                     $output .= 'position            : new google.maps.LatLng(' . $v . '),';
                     if ($icn)
@@ -360,15 +360,15 @@ class vcMacedGmap
 
                 $output .= 'bounds.extend(latlng);map.fitBounds(bounds);';
             }
-            
+
             $output .= '}';
-        
+
             $output .= 'google_maps_' . $uid . '();';
 
                 if ( $toggle == 'true') {
                     $output .= 'var button     = $("#gMapTrigger_' . $uid . '");';
                     $output .= 'var button_txt = $("#gMapTrigger_' . $uid . ' span");';
-                    
+
                     $output .= '$("#gMapWrapper_' . $uid . '").on("hidden.bs.collapse", function () {';
                         $output .= 'button_txt.data("text-original", button_txt.text());';
                         $output .= 'button_txt.text(button.data("text-swap"));';
@@ -382,11 +382,11 @@ class vcMacedGmap
         $output .= '})(jQuery, window);';
         // ]]>
         $output .= '</script>' . "\n";
-        
+
         $output .= '<div class="google-map-wrapper ' . $class . '" id="gmapHolder_' . $uid . '">';
-        
+
         if ($titl || $content) {
-            
+
             $output .= '<div class="google-map-contact-wrapper" id="gMapWrapper_' . $uid . '">';
             $output .= '<div class="get_in_touch">';
             if ($titl)
@@ -422,21 +422,29 @@ class vcMacedGmap
             $output .= '</div>';
             $output .= '</div>';
         }
-        
+
+        $rocket_data = get_option('rocket_data');
+        if ( isset($rocket_data['rocket__opt_content_bg_color']) || !empty($rocket_data['rocket__opt_content_bg_color']) ) {
+          $separator_shape_background = $rocket_data['rocket__opt_content_bg_color'];
+        } else {
+          $separator_shape_background = '#f1f2f4';
+        }
+
         if ( $toggle == 'true') {
             $output .= '<div class="hr-scroll-bottom"><a data-toggle="collapse" data-parent="#gmapHolder_' . $uid . '" href="#gMapWrapper_' . $uid . '" aria-expanded="true" aria-controls="gMapWrapper_' . $uid . '" id="gMapTrigger_' . $uid . '" data-text-swap="' . $toggle_open . '"><span>' . $toggle_closed . '</span></a></div>';
             if ($shape == 'top_wave') {
                 $shape = 'google-map-shap-wave-top';
             }
-            $output .= '<div class="google-map-inner-wrapper ' . $shape . ' collapse in" id="gMapWrapper_' . $uid . '">';
+            $output .= '<div class="google-map-inner-wrapper collapse in" id="gMapWrapper_' . $uid . '">';
+                $output .= '<svg class="google-map-separator" xmlns="http://www.w3.org/2000/svg" version="1.0" width="1200" fill="' . $separator_shape_background . '" height="30" viewBox="0 0 1200 30" preserveAspectRatio="none"><path d="M0,0S1.209,1.508,200.671,7.031C375.088,15.751,454.658,30,600,30V0H0ZM1200,0s-90.21,1.511-200.671,7.034C824.911,15.751,745.342,30,600,30V0h600Z"/></svg>';
                 $output .= '<div class="google-map" id="google-map-area-' . $uid . '" style="width:100%; height:' . intval($height) . 'px;">&nbsp;</div>';
             $output .= '</div>';
         } else {
             $output .= '<div class="google-map" id="google-map-area-' . $uid . '" style="width:100%; height:' . intval($height) . 'px;">&nbsp;</div>';
         }
-        
+
         $output .= '</div>' . "\n";
-        
+
         return $output;
     }
 
