@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Visual Composer Maced Google Maps
  * Plugin URI:
- * Version: 1.2.7
+ * Version: 1.2.8
  * Author: macerier
  * Author URI:
  * Description: Simply creates google maps with Visual Composer or via shortcode. Modified by Dan Fisher
@@ -385,44 +385,6 @@ class vcMacedGmap
 
         $output .= '<div class="google-map-wrapper ' . $class . '" id="gmapHolder_' . $uid . '">';
 
-        if ($titl || $content) {
-
-            $output .= '<div class="google-map-contact-wrapper" id="gMapWrapper_' . $uid . '">';
-            $output .= '<div class="get_in_touch">';
-            if ($titl)
-                $output .= '<p class="sameH3">' . $titl . '</p>';
-            $output .= '<div class="get_in_touch_wrapper">';
-            $output .= '<ul>';
-            if ($content) {
-                $output .= '<li class="address">';
-                $output .= '<span class="icon"><i class="flaticon-mg-pointer"></i></span>';
-                $output .= '<span class="address_wrapper">' . do_shortcode($content) . '</span>';
-                $output .= '</li>';
-            }
-            if ($telephone) {
-                $output .= '<li class="phone">';
-                $output .= '<span class="icon"><i class="flaticon-mg-telephone"></i></span>';
-                $output .= '<p><a href="tel:' . str_replace(' ', '', $telephone) . '">' . $telephone . '</a></p>';
-                $output .= '</li>';
-            }
-            if ($email) {
-                $output .= '<li class="mail">';
-                $output .= '<span class="icon"><i class="flaticon-mg-envelope"></i></span>';
-                $output .= '<p><a href="mailto:' . $email . '">' . $email . '</a></p>';
-                $output .= '</li>';
-            }
-            if ($www) {
-                $output .= '<li class="www">';
-                $output .= '<span class="icon"><i class="flaticon-mg-link"></i></span>';
-                $output .= '<p><a target="_blank" href="http://' . $www . '">' . $www . '</a></p>';
-                $output .= '</li>';
-            }
-            $output .= '</ul>';
-            $output .= '</div>';
-            $output .= '</div>';
-            $output .= '</div>';
-        }
-
         $rocket_data = get_option('rocket_data');
         if ( isset($rocket_data['rocket__opt_content_bg_color']) || !empty($rocket_data['rocket__opt_content_bg_color']) ) {
           $separator_shape_background = $rocket_data['rocket__opt_content_bg_color'];
@@ -443,7 +405,46 @@ class vcMacedGmap
             $output .= '<div class="google-map" id="google-map-area-' . $uid . '" style="width:100%; height:' . intval($height) . 'px;">&nbsp;</div>';
         }
 
+        if ($titl || $content) {
+
+            $output .= '<div class="google-map-contact-wrapper" id="gMapWrapper_' . $uid . '">';
+            $output .= '<div class="get_in_touch">';
+            if ($titl)
+                $output .= '<h5>' . $titl . '</h5>';
+            $output .= '<div class="get_in_touch_wrapper">';
+            $output .= '<ul>';
+            if ($content) {
+                $output .= '<li class="address">';
+                $output .= '<span class="icon"><i class="fa fa-map"></i></span>';
+                $output .= '<span class="address_wrapper">' . do_shortcode($content) . '</span>';
+                $output .= '</li>';
+            }
+            if ($telephone) {
+                $output .= '<li class="phone">';
+                $output .= '<span class="icon"><i class="fa fa-phone"></i></span>';
+                $output .= '<p><a href="tel:' . str_replace(' ', '', $telephone) . '">' . $telephone . '</a></p>';
+                $output .= '</li>';
+            }
+            if ($email) {
+                $output .= '<li class="mail">';
+                $output .= '<span class="icon"><i class="fa fa-envelope"></i></span>';
+                $output .= '<p><a href="mailto:' . $email . '">' . $email . '</a></p>';
+                $output .= '</li>';
+            }
+            if ($www) {
+                $output .= '<li class="www">';
+                $output .= '<span class="icon"><i class="fa fa-link"></i></span>';
+                $output .= '<p><a target="_blank" href="http://' . $www . '">' . $www . '</a></p>';
+                $output .= '</li>';
+            }
+            $output .= '</ul>';
+            $output .= '</div>';
+            $output .= '</div>';
+            $output .= '</div>';
+        }
+
         $output .= '</div>' . "\n";
+
 
         return $output;
     }
